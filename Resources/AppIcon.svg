@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6E7BFF"/>
+      <stop offset="1" stop-color="#4B3FE0"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#bg)"/>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#sheen)"/>
+  <g fill="#FFFFFF">
+    <rect x="272" y="370" width="64" height="160" rx="32"/>
+    <rect x="376" y="300" width="64" height="300" rx="32"/>
+    <rect x="480" y="240" width="64" height="420" rx="32"/>
+    <rect x="584" y="300" width="64" height="300" rx="32"/>
+    <rect x="688" y="370" width="64" height="160" rx="32"/>
+  </g>
+  <rect x="332" y="700" width="360" height="40" rx="20" fill="#FFFFFF" opacity="0.9"/>
+  <rect x="402" y="768" width="220" height="40" rx="20" fill="#FFFFFF" opacity="0.5"/>
+</svg>
