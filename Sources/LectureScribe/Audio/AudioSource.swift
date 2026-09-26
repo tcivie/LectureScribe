@@ -13,7 +13,7 @@ enum SourceKind: Equatable, Hashable, Sendable {
     var displayName: String {
         switch self {
         case .system: return "System audio (Safari, etc.)"
-        case .microphone: return "Microphone (system default)"
+        case .microphone: return "Microphone (built-in)"
         case .device(let name): return name
         }
     }
@@ -72,6 +72,7 @@ protocol AudioSource: AnyObject {
     var sink: ((AVAudioPCMBuffer) -> Void)? { get set }
     var analyzerInputSink: ((AnalyzerInput) -> Void)? { get set }
     var providesAnalyzerInput: Bool { get }
+    var inputLevel: Float { get }
     var onStopped: ((Error) -> Void)? { get set }
     func prepare() async throws -> AVAudioFormat
     func begin() async throws
@@ -81,6 +82,7 @@ protocol AudioSource: AnyObject {
 
 extension AudioSource {
     var providesAnalyzerInput: Bool { false }
+    var inputLevel: Float { 0 }
 }
 
 func rmsLevel(_ buffer: AVAudioPCMBuffer) -> Float {

@@ -8,9 +8,12 @@ var transcriptsRoot: URL {
 
 func resolveTranscriptsRoot(config: StorageConfig, fileManager: FileManager) -> URL {
     if let custom = config.customRoot, !custom.isEmpty {
-        return URL(fileURLWithPath: (custom as NSString).expandingTildeInPath, isDirectory: true)
+        let url = URL(fileURLWithPath: (custom as NSString).expandingTildeInPath, isDirectory: true)
+        // A custom folder on an unmounted volume (or a deleted parent) falls back to the Desktop.
+        if fileManager.fileExists(atPath: url.deletingLastPathComponent().path) { return url }
+        Log.engine("transcripts folder '\(url.path)' is unreachable — using the Desktop")
     }
-    return fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    return fileManager.urls(for: .desktopDirectory, in: .userDomainMask)[0]
         .appendingPathComponent(config.folderName, isDirectory: true)
 }
 

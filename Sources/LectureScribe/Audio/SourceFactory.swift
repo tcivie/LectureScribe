@@ -24,8 +24,11 @@ enum SourceFactory {
     }
 
     static func deviceQuery(for kind: SourceKind) -> String? {
-        if case .device(let name) = kind { return name }
-        return nil
+        switch kind {
+        case .device(let name): return name
+        case .microphone: return CoreAudioDevices.builtInInput()?.name
+        case .system: return nil
+        }
     }
 
     private static func providerSource(query: String?, transcriber: SpeechTranscriber) async throws -> (AudioSource, AVAudioFormat)? {
@@ -46,7 +49,7 @@ struct AnalyzerFeed: @unchecked Sendable {
 
     func connect(_ source: AudioSource, format: AVAudioFormat, transcriber: SpeechTranscriber) async throws {
         guard !source.providesAnalyzerInput else {
-            source.analyzerInputSink = forward
+            source.analyzerInputSink = { [weak source] in forward($0, level: source?.inputLevel ?? 0) }
             return Log.engine("source '\(source.name)' → analyzer (CaptureInputSequenceProvider)")
         }
         guard let target = await TranscriberFactory.bestFormat(for: transcriber, source: format) else {
@@ -57,9 +60,9 @@ struct AnalyzerFeed: @unchecked Sendable {
         Log.engine("source '\(source.name)' \(format.sampleRate)Hz/\(format.channelCount)ch → analyzer \(target.sampleRate)Hz/\(target.channelCount)ch")
     }
 
-    func forward(_ input: AnalyzerInput) {
+    func forward(_ input: AnalyzerInput, level inputLevel: Float) {
         samples.add(Int64((input.bufferDuration.seconds * input.bufferFormat.sampleRate).rounded()))
-        level.store(Self.level(of: input))
+        level.store(inputLevel)
         continuation.yield(input)
     }
 
@@ -68,9 +71,5 @@ struct AnalyzerFeed: @unchecked Sendable {
         level.store(rmsLevel(buffer))
         let inputs = (try? converter.convert(buffer, at: nil)) ?? []
         inputs.forEach { continuation.yield($0) }
-    }
-
-    private static func level(of input: AnalyzerInput) -> Float {
-        rmsLevel(input.buffer)
     }
 }

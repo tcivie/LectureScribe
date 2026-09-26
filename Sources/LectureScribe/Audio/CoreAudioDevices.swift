@@ -47,6 +47,12 @@ enum CoreAudioDevices {
         uint32Property(kAudioDevicePropertyDeviceIsRunningSomewhere, of: id).map { $0 != 0 } ?? false
     }
 
+    /// The Mac's own microphone. "Microphone" means this one, never the system default,
+    /// which macOS may switch to an iPhone (Continuity) or a headset on its own.
+    static func builtInInput() -> Device? {
+        inputs().first { uint32Property(kAudioDevicePropertyTransportType, of: $0.id) == kAudioDeviceTransportTypeBuiltIn }
+    }
+
     static func defaultDevice(output: Bool) -> AudioDeviceID? {
         let selector = output ? kAudioHardwarePropertyDefaultOutputDevice : kAudioHardwarePropertyDefaultInputDevice
         return uint32Property(selector, of: systemObject).flatMap { $0 == 0 ? nil : $0 }
