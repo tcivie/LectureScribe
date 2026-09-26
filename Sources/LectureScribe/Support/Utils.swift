@@ -10,7 +10,7 @@ func resolveTranscriptsRoot(config: StorageConfig, fileManager: FileManager) -> 
     if let custom = config.customRoot, !custom.isEmpty {
         return URL(fileURLWithPath: (custom as NSString).expandingTildeInPath, isDirectory: true)
     }
-    return fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    return fileManager.urls(for: .desktopDirectory, in: .userDomainMask)[0]
         .appendingPathComponent(config.folderName, isDirectory: true)
 }
 

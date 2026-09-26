@@ -24,8 +24,11 @@ enum SourceFactory {
     }
 
     static func deviceQuery(for kind: SourceKind) -> String? {
-        if case .device(let name) = kind { return name }
-        return nil
+        switch kind {
+        case .device(let name): return name
+        case .microphone: return CoreAudioDevices.builtInInput()?.name
+        case .system: return nil
+        }
     }
 
     private static func providerSource(query: String?, transcriber: SpeechTranscriber) async throws -> (AudioSource, AVAudioFormat)? {

@@ -51,7 +51,7 @@ final class InputLevelMonitor {
 
     private func refresh() {
         devices = CoreAudioDevices.inputs()
-        defaultInput = CoreAudioDevices.defaultDevice(output: false)
+        defaultInput = CoreAudioDevices.builtInInput()?.id ?? CoreAudioDevices.defaultDevice(output: false)
         let present = Set(devices.map(\.id))
         taps.filter { !present.contains($0.key) }.forEach { $0.value.close() }
         taps = taps.filter { present.contains($0.key) }

@@ -41,7 +41,7 @@ On the first run, macOS asks for these permissions:
 
 ## Transcripts
 
-Each session gets its own folder in `~/Documents/LectureTranscripts/`:
+Each session gets its own folder in `~/Desktop/LectureTranscripts/`:
 
 | File | Content |
 |---|---|

@@ -13,7 +13,7 @@ enum SourceKind: Equatable, Hashable, Sendable {
     var displayName: String {
         switch self {
         case .system: return "System audio (Safari, etc.)"
-        case .microphone: return "Microphone (system default)"
+        case .microphone: return "Microphone (built-in)"
         case .device(let name): return name
         }
     }

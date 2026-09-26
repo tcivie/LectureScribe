@@ -116,11 +116,11 @@ import Testing
         #expect(resolveTranscriptsRoot(config: config, fileManager: .default).path == temp.url.path)
     }
 
-    @Test func documentsIsTheDefault() {
-        #expect(resolveTranscriptsRoot(config: StorageConfig(customRoot: nil), fileManager: .default).path.hasSuffix("/Documents/LectureTranscripts"))
+    @Test func desktopIsTheDefault() {
+        #expect(resolveTranscriptsRoot(config: StorageConfig(customRoot: nil), fileManager: .default).path.hasSuffix("/Desktop/LectureTranscripts"))
     }
 
-    @Test func emptyCustomFolderFallsBackToDocuments() {
-        #expect(resolveTranscriptsRoot(config: StorageConfig(customRoot: ""), fileManager: .default).path.hasSuffix("/Documents/LectureTranscripts"))
+    @Test func emptyCustomFolderFallsBackToDesktop() {
+        #expect(resolveTranscriptsRoot(config: StorageConfig(customRoot: ""), fileManager: .default).path.hasSuffix("/Desktop/LectureTranscripts"))
     }
 }
