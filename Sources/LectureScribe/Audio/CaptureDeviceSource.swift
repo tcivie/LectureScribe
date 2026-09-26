@@ -10,11 +10,13 @@ final class CaptureDeviceSource: AudioSource {
     var analyzerInputSink: ((AnalyzerInput) -> Void)?
     var onStopped: ((Error) -> Void)?
     var providesAnalyzerInput: Bool { true }
+    var inputLevel: Float { meter?.box.load() ?? 0 }
 
     private let device: AVCaptureDevice
     private let transcriber: SpeechTranscriber
     private var provider: CaptureInputSequenceProvider?
     private var forwarder: Task<Void, Never>?
+    private var meter: DeviceTap?
 
     init(device: AVCaptureDevice, transcriber: SpeechTranscriber) {
         self.device = device
@@ -46,6 +48,9 @@ final class CaptureDeviceSource: AudioSource {
     func begin() async throws {
         guard let provider else { throw SourceError.conversionFailed }
         await Self.run(provider.captureSession, running: true)
+        // The provider's AnalyzerInputs carry no PCM copy (AnalyzerInput.buffer traps on macOS 27),
+        // so the level meter taps the same device through CoreAudio instead.
+        meter = CoreAudioDevices.input(matching: name).flatMap { DeviceTap(device: $0.id) }
         forwarder = Task { [weak self] in await self?.forward(provider.analyzerInputs) }
     }
 
@@ -58,6 +63,8 @@ final class CaptureDeviceSource: AudioSource {
         onStopped = nil
         forwarder?.cancel()
         forwarder = nil
+        meter?.close()
+        meter = nil
         if let session = provider?.captureSession { await Self.run(session, running: false) }
         provider = nil
     }
